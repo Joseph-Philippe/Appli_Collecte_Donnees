@@ -161,7 +161,11 @@ def register():
                          (username, email, hashed_pw))
             conn.commit()
             conn.close()
-            return redirect(url_for('index'))
+            session['user_email'] = email
+            session['authenticated'] = True
+
+            return redirect(url_for('home'))
+            
         except sqlite3.IntegrityError:
             return "Cet email est déjà utilisé ! <a href='/register'>Réessayer</a>"
             
