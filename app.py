@@ -1,3 +1,44 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import random
+
+def envoyer_email_otp(email_destinataire, code_otp):
+    # Paramètres de ton compte Gmail
+    email_expediteur = "TON_ADRESSE_GMAIL@gmail.com"  # Ton e-mail
+    mot_de_passe = "abcd efgh ijkl mnop"             # Ton code d'application à 16 caractères
+
+    # Configuration de l'e-mail
+    sujet = "Votre code de validation de connexion"
+    corps = f"""
+    Bonjour cher Mr (Mme),
+
+    Voici votre code de validation à usage unique pour vous connecter : {code_otp}
+
+    Ce code est valable uniquement pour cette session.
+
+    Cordialement KJP,
+    L'équipe de collecte de données vous remercie de votre confiance et de votre intérêt pour notre projet.
+    Nous sommes ravis de vous accompagner dans cette aventure.
+    N'hésitez pas à nous contacter si vous avez des questions ou besoin d'assistance.
+    """
+
+    # Création du message
+    message = MIMEMultipart()
+    message['From'] = email_expediteur
+    message['To'] = email_destinataire
+    message['Subject'] = sujet
+    message.attach(MIMEText(corps, 'plain'))
+
+    try:
+        # Connexion sécurisée au serveur SMTP de Google (port 465 pour SSL)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(email_expediteur, mot_de_passe)
+            server.sendmail(email_expediteur, email_destinataire, message.as_string())
+        print(f"E-mail OTP envoyé avec succès à {email_destinataire} !")
+    except Exception as e:
+        print(f"Erreur d'envoi d'e-mail : {e}")
+
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -85,6 +126,30 @@ def calculer_moindres_carres(donnees):
     
     return round(moyenne_x, 2), round(a, 4), round(b, 2), equation
 
+import smtplib
+from email.mime.text import MIMEText
+
+def envoyer_email_otp(email_destinataire, code_otp):
+    # Remplace par ton adresse Gmail et ton mot de passe d'application Google
+    email_expediteur = "ton_adresse@gmail.com"
+    mot_de_passe = "ton_mot_de_passe_d_application" 
+
+    sujet = "Ton code de vérification OTP"
+    corps = f"Voici ton code de vérification : {code_otp}"
+
+    msg = MIMEText(corps)
+    msg['Subject'] = sujet
+    msg['From'] = email_expediteur
+    msg['To'] = email_destinataire
+
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(email_expediteur, mot_de_passe)
+            server.sendmail(email_expediteur, email_destinataire, msg.as_string())
+        print("E-mail envoyé avec succès !")
+    except Exception as e:
+        print(f"Erreur lors de l'envoi de l'e-mail : {e}")
+
 @app.route('/')
 def index():
     # Si l'utilisateur est déjà passé par l'OTP, on l'envoie direct au Home
@@ -114,7 +179,8 @@ def login():
         otp_storage[email] = otp_code
         session['user_email'] = email
         
-        print(f"\n--- CODE OTP : {otp_code} ---\n")
+        envoyer_email_otp(email, otp_code)
+        # print(f"\n--- CODE OTP : {otp_code} ---\n")
         return redirect(url_for('verify_otp'))
     else:
         return "Email ou mot de passe incorrect. <a href='/'>Réessayer</a>"
@@ -165,7 +231,7 @@ def register():
             session['authenticated'] = True
 
             return redirect(url_for('home'))
-            
+
         except sqlite3.IntegrityError:
             return "Cet email est déjà utilisé ! <a href='/register'>Réessayer</a>"
             
