@@ -35,6 +35,56 @@ app.secret_key = 'inf232_secret_key_joseph'
 # Dictionnaire pour stocker temporairement les codes générés { 'email': 'code' }
 otp_storage = {}
 
+def collecter_donnees_e_commerce():
+    # Plus tard, tu remplaceras ce dictionnaire par ton vrai script de scraping
+    # qui va lire les sites e-commerce.
+    donnees_extraites = [
+        {"produit": "iPhone 15 Pro", "prix": 850000, "quantite": 12},
+        {"produit": "Samsung S24 Ultra", "prix": 900000, "quantite": 8},
+        {"produit": "MacBook Air M3", "prix": 1200000, "quantite": 5},
+        {"produit": "Sony WH-1000XM5", "prix": 250000, "quantite": 25}
+    ]
+    return donnees_extraites
+
+def calculer_moindres_carres(donnees):
+    """
+    Calcule la droite de régression linéaire y = ax + b.
+    x = Prix, y = Quantité
+    """
+    if not donnees:
+        return 0, 0, "y = 0x + 0"
+    
+    n = len(donnees)
+    
+    # 1. Sommes nécessaires
+    sum_x = sum(d['prix'] for d in donnees)
+    sum_y = sum(d['quantite'] for d in donnees)
+    sum_xy = sum(d['prix'] * d['quantite'] for d in donnees)
+    sum_x2 = sum(d['prix'] ** 2 for d in donnees)
+    
+    # 2. Moyennes
+    moyenne_x = sum_x / n
+    moyenne_y = sum_y / n
+    
+    # 3. Calcul de la pente 'a' (Covariance / Variance de X)
+    # Formule : a = (n * sum(xy) - sum(x)*sum(y)) / (n * sum(x^2) - (sum(x))^2)
+    denominateur = (n * sum_x2) - (sum_x ** 2)
+    
+    if denominateur == 0:  # Éviter la division par zéro
+        a = 0
+    else:
+        a = (n * sum_xy - sum_x * sum_y) / denominateur
+        
+    # 4. Calcul de l'ordonnée à l'origine 'b'
+    # Formule : b = moyenne_y - a * moyenne_x
+    b = moyenne_y - (a * moyenne_x)
+    
+    # Construction de la chaîne d'affichage pour l'équation
+    signe = "+" if b >= 0 else "-"
+    equation = f"y = {a:.4f}x {signe} {abs(b):.2f}"
+    
+    return round(moyenne_x, 2), round(a, 4), round(b, 2), equation
+
 @app.route('/')
 def index():
     # Si l'utilisateur est déjà passé par l'OTP, on l'envoie direct au Home
@@ -200,31 +250,36 @@ def run_collecte():
     return redirect(url_for('choix_analyse'))
 
 # --- ROUTE POUR L'OPTION 1 (Lancer l'extraction) ---
-@app.route('/analyser-donnees', methods=['GET', 'POST'])
+@app.route('/analyser-donnees', methods=['POST'])
 def analyser_donnees():
     source = request.form.get('source')
-    
-    # Si l'utilisateur vient de "Remplir le tableau"
-    if source == 'manuel':
+    donnees = []
+    titre = ""
+
+    # 1. Récupération des données
+    if source == 'scraping':
+        donnees = collecter_donnees_e_commerce()
+        titre = "Résultats du Scraping E-commerce"
+    elif source == 'manuel':
         noms = request.form.getlist('produit[]')
-        prix = [float(p) for p in request.form.getlist('prix[]')]
+        prix_list = [float(p) for p in request.form.getlist('prix[]')]
         quantites = [int(q) for q in request.form.getlist('quantite[]')]
         
-        donnees = []
         for i in range(len(noms)):
-            donnees.append({"produit": noms[i], "prix": prix[i], "quantite": quantites[i]})
-        
-        return render_template('view_data.html', data=donnees, titre="Analyse Manuelle")
-    
-    # Si l'utilisateur clique sur "Lancer l'extraction"
-    else:
-        # Simulation de données scrapées
-        donnees_demo = [
-            {"produit": "Produit Scrapé 1", "prix": 120, "quantite": 8},
-            {"produit": "Produit Scrapé 2", "prix": 95, "quantite": 15}
-        ]
-        return render_template('view_data.html', data=donnees_demo, titre="Analyse Scraping")
+            donnees.append({"produit": noms[i], "prix": prix_list[i], "quantite": quantites[i]})
+        titre = "Analyse de Saisie Manuelle"
 
+    # 2. Calculs statistiques
+    moyenne_prix, a, b, equation = calculer_moindres_carres(donnees)
+
+    # 3. Envoi au template
+    return render_template(
+        'analyser_donnees.html',
+        data=donnees,
+        titre=titre,
+        moyenne=moyenne_prix,
+        equation=equation
+    )
 # --- ROUTE POUR AFFICHER LE FORMULAIRE (Remplir le tableau) ---
 @app.route('/saisie-manuelle')
 def saisie_manuelle():

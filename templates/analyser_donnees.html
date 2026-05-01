@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Analyse en Temps Réel - KJP</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="main-content">
+    <div class="results-container">
+        
+        <header class="results-header">
+            <h1 class="centered-title">{{ titre }}</h1>
+            <p class="live-indicator"><span class="dot"></span> Données synchronisées avec le e-commerce</p>
+        </header>
+
+        <div class="stats-grid top-kpi">
+            <div class="stat-card">
+                <h4>Prix Moyen du Marché</h4>
+                <p class="stat-value">{{ moyenne }} FCFA</p>
+            </div>
+            <div class="stat-card">
+                <h4>Nombre d'Articles</h4>
+                <p class="stat-value">{{ data|length }}</p>
+            </div>
+            <div class="stat-card">
+                <h4>Indice de Confiance</h4>
+                <p class="stat-value">98%</p>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            
+            <div class="left-col">
+                <h3 class="white-text">Visualisation des Tendances</h3>
+                <div class="chart-box">
+                    <canvas id="chartScraping"></canvas>
+                </div>
+            </div>
+
+            <div class="right-col">
+                <h3 class="white-text">Détails et Modélisation</h3>
+                
+                <div class="right-stats">
+                    <div class="stat-card mini">
+                        <h4>Équation de la droite (Moindres Carrés)</h4>
+                        <p class="stat-value mini-val">{{ equation }}</p>
+                    </div>
+                </div>
+
+                <div class="table-box">
+                    <h4 class="white-text">Tableau des articles collectés</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix (X)</th>
+                                <th>Quantité (Y)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in data %}
+                            <tr>
+                                <td>{{ item.produit }}</td>
+                                <td>{{ item.prix }} FCFA</td>
+                                <td>{{ item.quantite }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <a href="/choix-analyse" class="btn-primary-centered">Nouvelle Analyse</a>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('chartScraping').getContext('2d');
+        const dataPrix = [{% for item in data %}{{ item.prix }},{% endfor %}];
+        const labelsProduits = [{% for item in data %}"{{ item.produit }}",{% endfor %}];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labelsProduits,
+                datasets: [{
+                    label: 'Variation des Prix',
+                    data: dataPrix,
+                    borderColor: '#ff7b00',
+                    backgroundColor: 'rgba(255, 123, 0, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, /* Réduit la hauteur du graphique */
+                plugins: {
+                    legend: { labels: { color: 'white' } }
+                },
+                scales: {
+                    y: { ticks: { color: 'white' } },
+                    x: { ticks: { color: 'white' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
