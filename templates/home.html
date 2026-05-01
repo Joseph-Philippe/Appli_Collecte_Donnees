@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil | Collecte Sécurisée</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel='stylesheet'>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <h2 class="logo">KJP<span>●</span></h2>
+            <div class="nav-links">
+                <a href="/home" class="active">HOME</a>
+                <a href="#">PROFILE</a>
+                <a href="#">OUTILS DE COLLECTE</a>
+                <a href="#">PRESENTATION</a>
+                <a href="/logout" style="color: #ff7e00; margin-left: 30px;"><i class='bx bx-log-out'></i></a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="objective-container">
+            <h1>Objectif de l'Application</h1>
+            <hr>
+            <p>
+                Cette plateforme a été conçue dans le cadre de l'unité d'enseignement <strong>INF232</strong>. 
+                Son but principal est d'automatiser et de sécuriser la <strong>collecte de données sectorielles</strong>.
+            </p>
+
+            <div class="features">
+                <div class="feature-card">
+                    <i class='bx bxs-shield-quarter'></i>
+                    <h3>Sécurité</h3>
+                    <p>Authentification double facteur (OTP) pour protéger l'accès aux données sensibles.</p>
+                </div>
+                <div class="feature-card">
+                    <i class='bx bxs-data'></i>
+                    <h3>Collecte</h3>
+                    <p>Extraction automatisée des données du secteur Commerce via Web Scraping.</p>
+                </div>
+                <div class="feature-card">
+                    <i class='bx bxs-chart'></i>
+                    <h3>Analyse</h3>
+                    <p>Traitement des données collectées pour générer des rapports exploitables.</p>
+                </div>
+            </div>
+
+            <a href="/outils" class="btn-start">Essayer</a>
+        </div>
+    </main>
+</body>
+</html>

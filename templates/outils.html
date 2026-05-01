@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Outils de Collecte | KJP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel='stylesheet'>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <h2 class="logo">KJP<span>●</span></h2>
+            <div class="nav-links">
+                <a href="/home">HOME</a>
+                <a href="#">PROFILE</a>
+                <a href="/outils" class="active">OUTILS DE COLLECTE</a>
+                <a href="/logout" style="color: #ff7e00; margin-left: 30px;">
+                    <i class='bx bx-log-out'></i>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="tools-container">
+            <h1>Centre de Collecte</h1>
+            <p>Sélectionnez le module de scraping à activer.</p>
+
+            <div class="tools-grid">
+                <!-- Carte Secteur Commerce -->
+                <div class="tool-card">
+                    <div class="status-online"></div>
+                    <i class='bx bxs-shopping-bag'></i>
+                    <h3>Secteur Commerce</h3>
+                    <p>Collecte les prix et noms de produits sur les sites e-commerce.</p>
+                    <form action="/run-collecte" method="POST">
+                        <input type="hidden" name="secteur" value="commerce">
+                        <button type="submit" class="btn-run">Lancer une analyse</button>
+                    </form>
+                </div>
+
+                <!-- Carte Secteur Santé (Exemple pour le futur) -->
+                <div class="tool-card disabled">
+                    <div class="status-offline"></div>
+                    <i class='bx bxs-capsule'></i>
+                    <h3>Secteur Santé</h3>
+                    <p>Collecte des données pharmaceutiques (Bientôt disponible).</p>
+                    <button class="btn-run" disabled>Indisponible</button>
+                </div>
+            </div>
+
+            <!-- Section Résultats -->
+            <div class="results-box">
+                <h3>Historique des collectes</h3>
+                <p>Vos dernières données sont stockées dans la base de données <strong>database.db</strong></p>
+                <a href="/view-data" class="btn-view">Consulter les Données</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

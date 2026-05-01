@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Mode d'Analyse - KJP</title>
+</head>
+<body class="main-content">
+    <div class="tools-container">
+        <h2>Analyse du Secteur Commerce</h2>
+        <p>Comment souhaitez-vous obtenir les données pour l'analyse ?</p>
+        
+        <div class="tools-grid">
+            <div class="tool-card">
+                <h3>Option 1</h3>
+                <p>Extraire depuis les sites e-commerce (Scraping)</p>
+                <a href="/analyser_donnees" class="btn-run">Lancer l'extraction</a>
+            </div>
+
+            <div class="tool-card">
+                <h3>Option 2</h3>
+                <p>Entrer mes propres données (Saisie manuelle)</p>
+                <a href="/saisie-manuelle" class="btn-run">Remplir le tableau</a>
+            </div>
+        </div>
+    </div>
+    <!-- Dans la carte Option 1 -->
+<form action="/analyser-donnees" method="POST">
+    <input type="hidden" name="source" value="scraping">
+    <button type="submit" class="btn-run">Lancer l'extraction</button>
+</form>
+
+<!-- Dans la carte Option 2 -->
+<a href="/saisie-manuelle" class="btn-run">Remplir le tableau</a>
+</body>
+</html>

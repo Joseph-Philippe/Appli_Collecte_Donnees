@@ -1,0 +1,100 @@
+<!-- templates/view_data.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Import de Chart.js pour les diagrammes -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Analyse des Données - KJP</title>
+</head>
+<body class="main-content">
+    <div class="container">
+        <h2>{{ titre }}</h2>
+        <a href="{{ url_for('choix_analyse') }}" class="btn-back">⬅ Retour au choix</a>
+
+        <div class="analysis-grid">
+            <!-- Section Tableau -->
+            <div class="results-box">
+                <h3>📦 Données Collectées</h3>
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Prix (X)</th>
+                            <th>Quantité (Y)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in data %}
+                        <tr>
+                            <td>{{ item.produit }}</td>
+                            <td>{{ item.prix }} €</td>
+                            <td>{{ item.quantite }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section Graphique -->
+            <div class="results-box">
+                <h3>📈 Nuage de Points & Régression</h3>
+                <canvas id="analysisChart"></canvas>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- Section Statistiques (INF252) -->
+        <div class="stats-container">
+            <h3>📝 Résumé Statistique</h3>
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <h4>Moyenne ($\bar{x}$)</h4>
+                    <p id="moyenne-val">Calcul en cours...</p>
+                    <small>Formule : $\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$</small>
+                </div>
+                <div class="stat-card">
+                    <h4>Équation de la droite</h4>
+                    <p id="equation-val">y = ax + b</p>
+                    <small>Méthode des moindres carrés</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de calcul et d'affichage -->
+    <script>
+        const data = {{ data | tojson }};
+        
+        // Extraction des prix (x) et quantités (y)
+        const labels = data.map(item => item.produit);
+        const xValues = data.map(item => item.prix);
+        const yValues = data.map(item => item.quantite);
+
+        // 1. Calcul de la moyenne
+        const moyenne = xValues.reduce((a, b) => a + b, 0) / xValues.length;
+        document.getElementById('moyenne-val').innerText = moyenne.toFixed(2) + " €";
+
+        // 2. Initialisation du graphique Chart.js
+        const ctx = document.getElementById('analysisChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Produits collectés',
+                    data: data.map(item => ({x: item.prix, y: item.quantite})),
+                    backgroundColor: '#ff7b00' // Orange KJP
+                }]
+            },
+            options: {
+                scales: {
+                    x: { title: { display: true, text: 'Prix (€)' } },
+                    y: { title: { display: true, text: 'Quantité en stock' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

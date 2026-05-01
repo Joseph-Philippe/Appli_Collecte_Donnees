@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenue | Joseph Collecte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel='stylesheet'>
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <h2 class="logo">KJP<span>●</span></h2>
+            <div class="nav-links">
+                <a href="#">HOME</a>
+                <a href="#"><A>PROFILE</A></a>
+                <a href="#">OUTILS DE COLLECTE</a>
+                <a href="#">PRESENTATION</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="content-text">
+            <h1>Application de <br><span>Collecte de Données</span></h1>
+            <p>Bienvenue sur la plateforme sécurisée de collecte de données.
+               Gérez vos données du secteur Commerce avec efficacité et sécurité.</p>
+            <button class="btn-info">EN SAVOIR PLUS</button>
+        </div>
+
+        <!-- Colonne DROITE : Ton formulaire actuel (Style Glass) -->
+        <div class="wrapper">
+            <form action="/login" method="POST">
+                <h1>Login</h1>
+                <div class="input-box">
+                    <input type="email" name="email" placeholder="Email or Number" required>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box">
+                    <input type="password" name="password" placeholder="Password" required>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                <div class="remember-forgot">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="/forgot-password">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <div class="register-link">
+                    <p>Don't have an account? <a href="/register">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

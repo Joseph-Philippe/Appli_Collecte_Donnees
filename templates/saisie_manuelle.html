@@ -1,0 +1,56 @@
+<!-- templates/saisie_manuelle.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Saisie Manuelle - KJP</title>
+</head>
+<body class="main-content">
+    <div class="results-box">
+        <h3>Entrez vos données de vente</h3>
+        
+        <form action="/analyser-donnees" method="POST">
+            <input type="hidden" name="source" value="manuel">
+            
+            <table border="1" id="table-donnees">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix (X)</th>
+                        <th>Quantité (Y)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Une ligne par défaut -->
+                    <tr>
+                        <td><input type="text" name="produit[]" placeholder="Ex: Laptop" required></td>
+                        <td><input type="number" name="prix[]" placeholder="0" required></td>
+                        <td><input type="number" name="quantite[]" placeholder="0" required></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top: 15px;">
+                <!-- Bouton pour ajouter une ligne -->
+                <button type="button" onclick="ajouterLigne()" class="btn-secondary">+ Ajouter une ligne</button>
+                <button type="submit" class="btn-run">Calculer les statistiques</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Script JavaScript pour le tableau dynamique -->
+    <script>
+        function ajouterLigne() {
+            const table = document.getElementById('table-donnees').getElementsByTagName('tbody')[0];
+            const nouvelleLigne = table.insertRow();
+
+            nouvelleLigne.innerHTML = `
+                <td><input type="text" name="produit[]" required></td>
+                <td><input type="number" name="prix[]" required></td>
+                <td><input type="number" name="quantite[]" required></td>
+            `;
+        }
+    </script>
+</body>
+</html>
